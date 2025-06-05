@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { Calculator, BarChart3 } from 'lucide-react';
+import { Calculator, BarChart3, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 interface GradeData {
   grade5: number;
@@ -67,6 +69,48 @@ const SubjectCalculator = () => {
       knowledgeQuality: parseFloat(knowledgeQuality.toFixed(1)),
       totalStudents: parseInt(studentCount) || totalGrades
     });
+  };
+
+  const downloadPDF = () => {
+    if (!results) return;
+
+    const doc = new jsPDF();
+    
+    // Заголовок
+    doc.setFontSize(20);
+    doc.text('EduMetrics - Отчет по предмету', 20, 20);
+    
+    if (subjectName) {
+      doc.setFontSize(14);
+      doc.text(`Предмет: ${subjectName}`, 20, 35);
+    }
+    
+    // Основные показатели
+    doc.setFontSize(12);
+    doc.text('Основные показатели:', 20, 50);
+    doc.text(`Средний балл: ${results.averageGrade}`, 20, 65);
+    doc.text(`Качество знаний: ${results.knowledgeQuality}%`, 20, 75);
+    doc.text(`Всего оценок: ${grades.grade5 + grades.grade4 + grades.grade3 + grades.grade2}`, 20, 85);
+    
+    // Таблица с распределением оценок
+    const tableData = [
+      ['Оценка', 'Количество', 'Процент от общего числа'],
+      ['5 (Отлично)', grades.grade5.toString(), `${((grades.grade5 / (grades.grade5 + grades.grade4 + grades.grade3 + grades.grade2)) * 100).toFixed(1)}%`],
+      ['4 (Хорошо)', grades.grade4.toString(), `${((grades.grade4 / (grades.grade5 + grades.grade4 + grades.grade3 + grades.grade2)) * 100).toFixed(1)}%`],
+      ['3 (Удовлетворительно)', grades.grade3.toString(), `${((grades.grade3 / (grades.grade5 + grades.grade4 + grades.grade3 + grades.grade2)) * 100).toFixed(1)}%`],
+      ['2 (Неудовлетворительно)', grades.grade2.toString(), `${((grades.grade2 / (grades.grade5 + grades.grade4 + grades.grade3 + grades.grade2)) * 100).toFixed(1)}%`]
+    ];
+
+    (doc as any).autoTable({
+      head: [tableData[0]],
+      body: tableData.slice(1),
+      startY: 100,
+      theme: 'grid'
+    });
+
+    // Сохранение файла
+    const fileName = subjectName ? `${subjectName}_отчет.pdf` : 'отчет_по_предмету.pdf';
+    doc.save(fileName);
   };
 
   const pieData = results ? [

@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { Plus, Trash2, Users, BarChart3 } from 'lucide-react';
+import { Plus, Trash2, Users, BarChart3, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 interface SubjectGrades {
   id: string;
@@ -104,6 +106,85 @@ const ClassCalculator = () => {
     average: subject.averageGrade || 0,
     quality: subject.knowledgeQuality || 0
   })) || [];
+
+  const downloadPDF = () => {
+    if (!results) return;
+
+    const doc = new jsPDF();
+    
+    // Заголовок
+    doc.setFontSize(20);
+    doc.text('EduMetrics - Отчет по классу', 20, 20);
+    
+    if (results.className) {
+      doc.setFontSize(14);
+      doc.text(`Класс: ${results.className}`, 20, 35);
+    }
+    
+    // Общие показатели
+    doc.setFontSize(12);
+    doc.text('Общие показатели класса:', 20, 50);
+    doc.text(`Средний балл по классу: ${results.overallAverage}`, 20, 65);
+    doc.text(`Качество знаний по классу: ${results.overallQuality}%`, 20, 75);
+    
+    // Таблица по предметам
+    const tableData = [
+      ['Предмет', 'Средний балл', 'Качество знаний', 'Всего оценок']
+    ];
+    
+    results.subjects.forEach(subject => {
+      const totalGrades = subject.grade5 + subject.grade4 + subject.grade3 + subject.grade2;
+      tableData.push([
+        subject.name || 'Не указан',
+        (subject.averageGrade || 0).toString(),
+        `${subject.knowledgeQuality || 0}%`,
+        totalGrades.toString()
+      ]);
+    });
+
+    (doc as any).autoTable({
+      head: [tableData[0]],
+      body: tableData.slice(1),
+      startY: 90,
+      theme: 'grid'
+    });
+
+    // Детальная информация по каждому предмету
+    let currentY = (doc as any).lastAutoTable.finalY + 20;
+    
+    results.subjects.forEach((subject, index) => {
+      if (currentY > 250) {
+        doc.addPage();
+        currentY = 20;
+      }
+      
+      doc.setFontSize(12);
+      doc.text(`Предмет: ${subject.name || 'Не указан'}`, 20, currentY);
+      currentY += 10;
+      
+      const detailData = [
+        ['Оценка', 'Количество'],
+        ['5 (Отлично)', subject.grade5.toString()],
+        ['4 (Хорошо)', subject.grade4.toString()],
+        ['3 (Удовлетворительно)', subject.grade3.toString()],
+        ['2 (Неудовлетворительно)', subject.grade2.toString()]
+      ];
+
+      (doc as any).autoTable({
+        head: [detailData[0]],
+        body: detailData.slice(1),
+        startY: currentY,
+        theme: 'grid',
+        margin: { left: 20, right: 20 }
+      });
+      
+      currentY = (doc as any).lastAutoTable.finalY + 15;
+    });
+
+    // Сохранение файла
+    const fileName = results.className ? `${results.className}_отчет_класса.pdf` : 'отчет_по_классу.pdf';
+    doc.save(fileName);
+  };
 
   return (
     <div className="space-y-6">
@@ -241,6 +322,11 @@ const ClassCalculator = () => {
                   <div className="text-3xl font-bold text-green-600">{results.overallQuality}%</div>
                 </div>
               </div>
+              
+              <Button onClick={downloadPDF} className="w-full mt-4" variant="outline">
+                <Download className="w-4 h-4 mr-2" />
+                Скачать отчет в PDF
+              </Button>
             </CardContent>
           </Card>
 
