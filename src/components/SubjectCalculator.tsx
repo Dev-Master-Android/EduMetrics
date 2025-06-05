@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Calculator, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -30,6 +29,29 @@ const SubjectCalculator = () => {
     grade2: 0
   });
   const [results, setResults] = useState<Results | null>(null);
+
+  const handleGradeInputFocus = (field: keyof GradeData) => {
+    if (grades[field] === 0) {
+      setGrades(prev => ({ ...prev, [field]: '' as any }));
+    }
+  };
+
+  const handleGradeInputBlur = (field: keyof GradeData, value: string) => {
+    const numValue = parseInt(value) || 0;
+    setGrades(prev => ({ ...prev, [field]: numValue }));
+  };
+
+  const handleStudentCountFocus = () => {
+    if (studentCount === '0') {
+      setStudentCount('');
+    }
+  };
+
+  const handleStudentCountBlur = (value: string) => {
+    if (value === '') {
+      setStudentCount('0');
+    }
+  };
 
   const calculateMetrics = () => {
     const totalGrades = grades.grade5 + grades.grade4 + grades.grade3 + grades.grade2;
@@ -91,6 +113,8 @@ const SubjectCalculator = () => {
                 type="number"
                 value={studentCount}
                 onChange={(e) => setStudentCount(e.target.value)}
+                onFocus={handleStudentCountFocus}
+                onBlur={(e) => handleStudentCountBlur(e.target.value)}
                 placeholder="Введите количество"
               />
             </div>
@@ -102,8 +126,10 @@ const SubjectCalculator = () => {
               <Input
                 id="grade5"
                 type="number"
-                value={grades.grade5}
+                value={grades.grade5 === 0 ? '' : grades.grade5}
                 onChange={(e) => setGrades(prev => ({ ...prev, grade5: parseInt(e.target.value) || 0 }))}
+                onFocus={() => handleGradeInputFocus('grade5')}
+                onBlur={(e) => handleGradeInputBlur('grade5', e.target.value)}
                 placeholder="0"
               />
             </div>
@@ -112,8 +138,10 @@ const SubjectCalculator = () => {
               <Input
                 id="grade4"
                 type="number"
-                value={grades.grade4}
+                value={grades.grade4 === 0 ? '' : grades.grade4}
                 onChange={(e) => setGrades(prev => ({ ...prev, grade4: parseInt(e.target.value) || 0 }))}
+                onFocus={() => handleGradeInputFocus('grade4')}
+                onBlur={(e) => handleGradeInputBlur('grade4', e.target.value)}
                 placeholder="0"
               />
             </div>
@@ -122,8 +150,10 @@ const SubjectCalculator = () => {
               <Input
                 id="grade3"
                 type="number"
-                value={grades.grade3}
+                value={grades.grade3 === 0 ? '' : grades.grade3}
                 onChange={(e) => setGrades(prev => ({ ...prev, grade3: parseInt(e.target.value) || 0 }))}
+                onFocus={() => handleGradeInputFocus('grade3')}
+                onBlur={(e) => handleGradeInputBlur('grade3', e.target.value)}
                 placeholder="0"
               />
             </div>
@@ -132,8 +162,10 @@ const SubjectCalculator = () => {
               <Input
                 id="grade2"
                 type="number"
-                value={grades.grade2}
+                value={grades.grade2 === 0 ? '' : grades.grade2}
                 onChange={(e) => setGrades(prev => ({ ...prev, grade2: parseInt(e.target.value) || 0 }))}
+                onFocus={() => handleGradeInputFocus('grade2')}
+                onBlur={(e) => handleGradeInputBlur('grade2', e.target.value)}
                 placeholder="0"
               />
             </div>

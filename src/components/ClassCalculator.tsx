@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Plus, Trash2, Users, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -53,6 +52,17 @@ const ClassCalculator = () => {
     setSubjects(subjects.map(subject => 
       subject.id === id ? { ...subject, [field]: value } : subject
     ));
+  };
+
+  const handleNumericInputFocus = (id: string, field: keyof SubjectGrades, currentValue: number) => {
+    if (currentValue === 0) {
+      updateSubject(id, field, '');
+    }
+  };
+
+  const handleNumericInputBlur = (id: string, field: keyof SubjectGrades, value: string) => {
+    const numValue = parseInt(value) || 0;
+    updateSubject(id, field, numValue);
   };
 
   const calculateClassMetrics = () => {
@@ -142,8 +152,10 @@ const ClassCalculator = () => {
                     <Label>Кол-во уч-ся</Label>
                     <Input
                       type="number"
-                      value={subject.studentCount}
+                      value={subject.studentCount === 0 ? '' : subject.studentCount}
                       onChange={(e) => updateSubject(subject.id, 'studentCount', parseInt(e.target.value) || 0)}
+                      onFocus={() => handleNumericInputFocus(subject.id, 'studentCount', subject.studentCount)}
+                      onBlur={(e) => handleNumericInputBlur(subject.id, 'studentCount', e.target.value)}
                       placeholder="0"
                     />
                   </div>
@@ -151,8 +163,10 @@ const ClassCalculator = () => {
                     <Label>Оценок "5"</Label>
                     <Input
                       type="number"
-                      value={subject.grade5}
+                      value={subject.grade5 === 0 ? '' : subject.grade5}
                       onChange={(e) => updateSubject(subject.id, 'grade5', parseInt(e.target.value) || 0)}
+                      onFocus={() => handleNumericInputFocus(subject.id, 'grade5', subject.grade5)}
+                      onBlur={(e) => handleNumericInputBlur(subject.id, 'grade5', e.target.value)}
                       placeholder="0"
                     />
                   </div>
@@ -160,8 +174,10 @@ const ClassCalculator = () => {
                     <Label>Оценок "4"</Label>
                     <Input
                       type="number"
-                      value={subject.grade4}
+                      value={subject.grade4 === 0 ? '' : subject.grade4}
                       onChange={(e) => updateSubject(subject.id, 'grade4', parseInt(e.target.value) || 0)}
+                      onFocus={() => handleNumericInputFocus(subject.id, 'grade4', subject.grade4)}
+                      onBlur={(e) => handleNumericInputBlur(subject.id, 'grade4', e.target.value)}
                       placeholder="0"
                     />
                   </div>
@@ -169,8 +185,10 @@ const ClassCalculator = () => {
                     <Label>Оценок "3"</Label>
                     <Input
                       type="number"
-                      value={subject.grade3}
+                      value={subject.grade3 === 0 ? '' : subject.grade3}
                       onChange={(e) => updateSubject(subject.id, 'grade3', parseInt(e.target.value) || 0)}
+                      onFocus={() => handleNumericInputFocus(subject.id, 'grade3', subject.grade3)}
+                      onBlur={(e) => handleNumericInputBlur(subject.id, 'grade3', e.target.value)}
                       placeholder="0"
                     />
                   </div>
@@ -178,8 +196,10 @@ const ClassCalculator = () => {
                     <Label>Оценок "2"</Label>
                     <Input
                       type="number"
-                      value={subject.grade2}
+                      value={subject.grade2 === 0 ? '' : subject.grade2}
                       onChange={(e) => updateSubject(subject.id, 'grade2', parseInt(e.target.value) || 0)}
+                      onFocus={() => handleNumericInputFocus(subject.id, 'grade2', subject.grade2)}
+                      onBlur={(e) => handleNumericInputBlur(subject.id, 'grade2', e.target.value)}
                       placeholder="0"
                     />
                   </div>
