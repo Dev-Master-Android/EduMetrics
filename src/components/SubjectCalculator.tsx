@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Calculator, BarChart3, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -93,12 +94,13 @@ const SubjectCalculator = () => {
     doc.text(`Всего оценок: ${grades.grade5 + grades.grade4 + grades.grade3 + grades.grade2}`, 20, 85);
     
     // Таблица с распределением оценок
+    const totalGrades = grades.grade5 + grades.grade4 + grades.grade3 + grades.grade2;
     const tableData = [
       ['Оценка', 'Количество', 'Процент от общего числа'],
-      ['5 (Отлично)', grades.grade5.toString(), `${((grades.grade5 / (grades.grade5 + grades.grade4 + grades.grade3 + grades.grade2)) * 100).toFixed(1)}%`],
-      ['4 (Хорошо)', grades.grade4.toString(), `${((grades.grade4 / (grades.grade5 + grades.grade4 + grades.grade3 + grades.grade2)) * 100).toFixed(1)}%`],
-      ['3 (Удовлетворительно)', grades.grade3.toString(), `${((grades.grade3 / (grades.grade5 + grades.grade4 + grades.grade3 + grades.grade2)) * 100).toFixed(1)}%`],
-      ['2 (Неудовлетворительно)', grades.grade2.toString(), `${((grades.grade2 / (grades.grade5 + grades.grade4 + grades.grade3 + grades.grade2)) * 100).toFixed(1)}%`]
+      ['5 (Отлично)', grades.grade5.toString(), `${((grades.grade5 / totalGrades) * 100).toFixed(1)}%`],
+      ['4 (Хорошо)', grades.grade4.toString(), `${((grades.grade4 / totalGrades) * 100).toFixed(1)}%`],
+      ['3 (Удовлетворительно)', grades.grade3.toString(), `${((grades.grade3 / totalGrades) * 100).toFixed(1)}%`],
+      ['2 (Неудовлетворительно)', grades.grade2.toString(), `${((grades.grade2 / totalGrades) * 100).toFixed(1)}%`]
     ];
 
     (doc as any).autoTable({
@@ -225,7 +227,13 @@ const SubjectCalculator = () => {
         <div className="grid md:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-blue-600">Результаты расчёта</CardTitle>
+              <CardTitle className="text-blue-600 flex items-center justify-between">
+                Результаты расчёта
+                <Button onClick={downloadPDF} variant="outline" size="sm" className="ml-2">
+                  <Download className="w-4 h-4 mr-2" />
+                  Скачать отчёт
+                </Button>
+              </CardTitle>
               {subjectName && <CardDescription>Предмет: {subjectName}</CardDescription>}
             </CardHeader>
             <CardContent className="space-y-4">
