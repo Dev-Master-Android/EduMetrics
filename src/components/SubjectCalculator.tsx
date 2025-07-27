@@ -165,7 +165,10 @@ const SubjectCalculator = () => {
               <Input
                 id="subject"
                 value={subjectName}
-                onChange={(e) => setSubjectName(e.target.value)}
+                onChange={(e) => {
+                  setSubjectName(e.target.value);
+                  localStorage.setItem('subjectName', e.target.value);
+                }}
                 placeholder="Например: Математика"
               />
             </div>
@@ -175,7 +178,10 @@ const SubjectCalculator = () => {
                 id="students"
                 type="number"
                 value={studentCount}
-                onChange={(e) => setStudentCount(e.target.value)}
+                onChange={(e) => {
+                  setStudentCount(e.target.value);
+                  localStorage.setItem('studentCount', e.target.value);
+                }}
                 onFocus={handleStudentCountFocus}
                 onBlur={(e) => handleStudentCountBlur(e.target.value)}
                 placeholder="Введите количество"
@@ -190,7 +196,11 @@ const SubjectCalculator = () => {
                 id="grade5"
                 type="number"
                 value={grades.grade5 === 0 ? '' : grades.grade5}
-                onChange={(e) => setGrades(prev => ({ ...prev, grade5: parseInt(e.target.value) || 0 }))}
+                onChange={(e) => {
+                  const newGrades = { ...grades, grade5: parseInt(e.target.value) || 0 };
+                  setGrades(newGrades);
+                  localStorage.setItem('subjectGrades', JSON.stringify(newGrades));
+                }}
                 onFocus={() => handleGradeInputFocus('grade5')}
                 onBlur={(e) => handleGradeInputBlur('grade5', e.target.value)}
                 placeholder="0"
@@ -202,7 +212,11 @@ const SubjectCalculator = () => {
                 id="grade4"
                 type="number"
                 value={grades.grade4 === 0 ? '' : grades.grade4}
-                onChange={(e) => setGrades(prev => ({ ...prev, grade4: parseInt(e.target.value) || 0 }))}
+                onChange={(e) => {
+                  const newGrades = { ...grades, grade4: parseInt(e.target.value) || 0 };
+                  setGrades(newGrades);
+                  localStorage.setItem('subjectGrades', JSON.stringify(newGrades));
+                }}
                 onFocus={() => handleGradeInputFocus('grade4')}
                 onBlur={(e) => handleGradeInputBlur('grade4', e.target.value)}
                 placeholder="0"
@@ -214,7 +228,11 @@ const SubjectCalculator = () => {
                 id="grade3"
                 type="number"
                 value={grades.grade3 === 0 ? '' : grades.grade3}
-                onChange={(e) => setGrades(prev => ({ ...prev, grade3: parseInt(e.target.value) || 0 }))}
+                onChange={(e) => {
+                  const newGrades = { ...grades, grade3: parseInt(e.target.value) || 0 };
+                  setGrades(newGrades);
+                  localStorage.setItem('subjectGrades', JSON.stringify(newGrades));
+                }}
                 onFocus={() => handleGradeInputFocus('grade3')}
                 onBlur={(e) => handleGradeInputBlur('grade3', e.target.value)}
                 placeholder="0"
@@ -226,7 +244,11 @@ const SubjectCalculator = () => {
                 id="grade2"
                 type="number"
                 value={grades.grade2 === 0 ? '' : grades.grade2}
-                onChange={(e) => setGrades(prev => ({ ...prev, grade2: parseInt(e.target.value) || 0 }))}
+                onChange={(e) => {
+                  const newGrades = { ...grades, grade2: parseInt(e.target.value) || 0 };
+                  setGrades(newGrades);
+                  localStorage.setItem('subjectGrades', JSON.stringify(newGrades));
+                }}
                 onFocus={() => handleGradeInputFocus('grade2')}
                 onBlur={(e) => handleGradeInputBlur('grade2', e.target.value)}
                 placeholder="0"

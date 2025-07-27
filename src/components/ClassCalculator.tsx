@@ -50,17 +50,23 @@ const ClassCalculator = () => {
       grade3: 0,
       grade2: 0
     };
-    setSubjects([...subjects, newSubject]);
+    const newSubjects = [...subjects, newSubject];
+    setSubjects(newSubjects);
+    localStorage.setItem('classSubjects', JSON.stringify(newSubjects));
   };
 
   const removeSubject = (id: string) => {
-    setSubjects(subjects.filter(subject => subject.id !== id));
+    const newSubjects = subjects.filter(subject => subject.id !== id);
+    setSubjects(newSubjects);
+    localStorage.setItem('classSubjects', JSON.stringify(newSubjects));
   };
 
   const updateSubject = (id: string, field: keyof SubjectGrades, value: string | number) => {
-    setSubjects(subjects.map(subject => 
+    const newSubjects = subjects.map(subject => 
       subject.id === id ? { ...subject, [field]: value } : subject
-    ));
+    );
+    setSubjects(newSubjects);
+    localStorage.setItem('classSubjects', JSON.stringify(newSubjects));
   };
 
   const handleNumericInputFocus = (id: string, field: keyof SubjectGrades, currentValue: number) => {
@@ -222,12 +228,15 @@ const ClassCalculator = () => {
         <CardContent className="space-y-4">
           <div>
             <Label htmlFor="className">Название класса</Label>
-            <Input
-              id="className"
-              value={className}
-              onChange={(e) => setClassName(e.target.value)}
-              placeholder="Например: 10А"
-            />
+                <Input
+                  id="className"
+                  value={className}
+                  onChange={(e) => {
+                    setClassName(e.target.value);
+                    localStorage.setItem('className', e.target.value);
+                  }}
+                  placeholder="Например: 10А"
+                />
           </div>
 
           <div className="flex justify-between items-center">
