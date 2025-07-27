@@ -19,17 +19,25 @@ interface GradeData {
 interface Results {
   averageGrade: number;
   knowledgeQuality: number;
+  performance: number;
   totalStudents: number;
 }
 
 const SubjectCalculator = () => {
-  const [subjectName, setSubjectName] = useState('');
-  const [studentCount, setStudentCount] = useState('');
-  const [grades, setGrades] = useState<GradeData>({
-    grade5: 0,
-    grade4: 0,
-    grade3: 0,
-    grade2: 0
+  const [subjectName, setSubjectName] = useState(() => 
+    localStorage.getItem('subjectName') || ''
+  );
+  const [studentCount, setStudentCount] = useState(() => 
+    localStorage.getItem('studentCount') || ''
+  );
+  const [grades, setGrades] = useState<GradeData>(() => {
+    const saved = localStorage.getItem('subjectGrades');
+    return saved ? JSON.parse(saved) : {
+      grade5: 0,
+      grade4: 0,
+      grade3: 0,
+      grade2: 0
+    };
   });
   const [results, setResults] = useState<Results | null>(null);
 
@@ -64,10 +72,18 @@ const SubjectCalculator = () => {
     const averageGrade = weightedSum / totalGrades;
     const qualityGrades = grades.grade5 + grades.grade4;
     const knowledgeQuality = (qualityGrades / totalGrades) * 100;
+    const performanceGrades = grades.grade5 + grades.grade4 + grades.grade3;
+    const performance = (performanceGrades / totalGrades) * 100;
+
+    // Сохраняем данные в localStorage
+    localStorage.setItem('subjectName', subjectName);
+    localStorage.setItem('studentCount', studentCount);
+    localStorage.setItem('subjectGrades', JSON.stringify(grades));
 
     setResults({
       averageGrade: parseFloat(averageGrade.toFixed(2)),
       knowledgeQuality: parseFloat(knowledgeQuality.toFixed(1)),
+      performance: parseFloat(performance.toFixed(1)),
       totalStudents: parseInt(studentCount) || totalGrades
     });
   };
@@ -91,7 +107,8 @@ const SubjectCalculator = () => {
     doc.text('Основные показатели:', 20, 50);
     doc.text(`Средний балл: ${results.averageGrade}`, 20, 65);
     doc.text(`Качество знаний: ${results.knowledgeQuality}%`, 20, 75);
-    doc.text(`Всего оценок: ${grades.grade5 + grades.grade4 + grades.grade3 + grades.grade2}`, 20, 85);
+    doc.text(`Успеваемость: ${results.performance}%`, 20, 85);
+    doc.text(`Всего оценок: ${grades.grade5 + grades.grade4 + grades.grade3 + grades.grade2}`, 20, 95);
     
     // Таблица с распределением оценок
     const totalGrades = grades.grade5 + grades.grade4 + grades.grade3 + grades.grade2;
@@ -106,7 +123,7 @@ const SubjectCalculator = () => {
     (doc as any).autoTable({
       head: [tableData[0]],
       body: tableData.slice(1),
-      startY: 100,
+      startY: 110,
       theme: 'grid'
     });
 
@@ -244,6 +261,10 @@ const SubjectCalculator = () => {
               <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg">
                 <div className="text-sm text-gray-600">Качество знаний</div>
                 <div className="text-3xl font-bold text-green-600">{results.knowledgeQuality}%</div>
+              </div>
+              <div className="bg-gradient-to-r from-orange-50 to-yellow-50 p-4 rounded-lg">
+                <div className="text-sm text-gray-600">Успеваемость</div>
+                <div className="text-3xl font-bold text-orange-600">{results.performance}%</div>
               </div>
               <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg">
                 <div className="text-sm text-gray-600">Всего оценок</div>

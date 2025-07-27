@@ -19,6 +19,7 @@ interface SubjectGrades {
   grade2: number;
   averageGrade?: number;
   knowledgeQuality?: number;
+  performance?: number;
 }
 
 interface ClassResults {
@@ -26,11 +27,17 @@ interface ClassResults {
   subjects: SubjectGrades[];
   overallAverage: number;
   overallQuality: number;
+  overallPerformance: number;
 }
 
 const ClassCalculator = () => {
-  const [className, setClassName] = useState('');
-  const [subjects, setSubjects] = useState<SubjectGrades[]>([]);
+  const [className, setClassName] = useState(() => 
+    localStorage.getItem('className') || ''
+  );
+  const [subjects, setSubjects] = useState<SubjectGrades[]>(() => {
+    const saved = localStorage.getItem('classSubjects');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [results, setResults] = useState<ClassResults | null>(null);
 
   const addSubject = () => {
@@ -70,17 +77,20 @@ const ClassCalculator = () => {
   const calculateClassMetrics = () => {
     const calculatedSubjects = subjects.map(subject => {
       const totalGrades = subject.grade5 + subject.grade4 + subject.grade3 + subject.grade2;
-      if (totalGrades === 0) return { ...subject, averageGrade: 0, knowledgeQuality: 0 };
+      if (totalGrades === 0) return { ...subject, averageGrade: 0, knowledgeQuality: 0, performance: 0 };
 
       const weightedSum = (subject.grade5 * 5) + (subject.grade4 * 4) + (subject.grade3 * 3) + (subject.grade2 * 2);
       const averageGrade = weightedSum / totalGrades;
       const qualityGrades = subject.grade5 + subject.grade4;
       const knowledgeQuality = (qualityGrades / totalGrades) * 100;
+      const performanceGrades = subject.grade5 + subject.grade4 + subject.grade3;
+      const performance = (performanceGrades / totalGrades) * 100;
 
       return {
         ...subject,
         averageGrade: parseFloat(averageGrade.toFixed(2)),
-        knowledgeQuality: parseFloat(knowledgeQuality.toFixed(1))
+        knowledgeQuality: parseFloat(knowledgeQuality.toFixed(1)),
+        performance: parseFloat(performance.toFixed(1))
       };
     });
 
@@ -92,12 +102,21 @@ const ClassCalculator = () => {
     const overallQuality = validSubjects.length > 0
       ? validSubjects.reduce((sum, s) => sum + s.knowledgeQuality!, 0) / validSubjects.length
       : 0;
+    
+    const overallPerformance = validSubjects.length > 0 
+      ? validSubjects.reduce((sum, s) => sum + s.performance!, 0) / validSubjects.length
+      : 0;
+
+    // Сохраняем данные в localStorage
+    localStorage.setItem('className', className);
+    localStorage.setItem('classSubjects', JSON.stringify(subjects));
 
     setResults({
       className,
       subjects: calculatedSubjects,
       overallAverage: parseFloat(overallAverage.toFixed(2)),
-      overallQuality: parseFloat(overallQuality.toFixed(1))
+      overallQuality: parseFloat(overallQuality.toFixed(1)),
+      overallPerformance: parseFloat(overallPerformance.toFixed(1))
     });
   };
 
@@ -121,33 +140,35 @@ const ClassCalculator = () => {
       doc.text(`Класс: ${results.className}`, 20, 35);
     }
     
-    // Общие показатели
-    doc.setFontSize(12);
-    doc.text('Общие показатели класса:', 20, 50);
-    doc.text(`Средний балл по классу: ${results.overallAverage}`, 20, 65);
-    doc.text(`Качество знаний по классу: ${results.overallQuality}%`, 20, 75);
+        // Общие показатели
+        doc.setFontSize(12);
+        doc.text('Общие показатели класса:', 20, 50);
+        doc.text(`Средний балл по классу: ${results.overallAverage}`, 20, 65);
+        doc.text(`Качество знаний по классу: ${results.overallQuality}%`, 20, 75);
+        doc.text(`Успеваемость по классу: ${results.overallPerformance}%`, 20, 85);
     
     // Таблица по предметам
-    const tableData = [
-      ['Предмет', 'Средний балл', 'Качество знаний', 'Всего оценок']
-    ];
+        const tableData = [
+            ['Предмет', 'Средний балл', 'Качество знаний', 'Успеваемость', 'Всего оценок']
+        ];
     
-    results.subjects.forEach(subject => {
-      const totalGrades = subject.grade5 + subject.grade4 + subject.grade3 + subject.grade2;
-      tableData.push([
-        subject.name || 'Не указан',
-        (subject.averageGrade || 0).toString(),
-        `${subject.knowledgeQuality || 0}%`,
-        totalGrades.toString()
-      ]);
-    });
+        results.subjects.forEach(subject => {
+            const totalGrades = subject.grade5 + subject.grade4 + subject.grade3 + subject.grade2;
+            tableData.push([
+                subject.name || 'Не указан',
+                (subject.averageGrade || 0).toString(),
+                `${subject.knowledgeQuality || 0}%`,
+                `${subject.performance || 0}%`,
+                totalGrades.toString()
+            ]);
+        });
 
-    (doc as any).autoTable({
-      head: [tableData[0]],
-      body: tableData.slice(1),
-      startY: 90,
-      theme: 'grid'
-    });
+        (doc as any).autoTable({
+            head: [tableData[0]],
+            body: tableData.slice(1),
+            startY: 100,
+            theme: 'grid'
+        });
 
     // Детальная информация по каждому предмету
     let currentY = (doc as any).lastAutoTable.finalY + 20;
@@ -312,7 +333,7 @@ const ClassCalculator = () => {
               {results.className && <CardDescription>Класс: {results.className}</CardDescription>}
             </CardHeader>
             <CardContent>
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid md:grid-cols-3 gap-4">
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg">
                   <div className="text-sm text-gray-600">Средний балл по классу</div>
                   <div className="text-3xl font-bold text-blue-600">{results.overallAverage}</div>
@@ -320,6 +341,10 @@ const ClassCalculator = () => {
                 <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg">
                   <div className="text-sm text-gray-600">Качество знаний по классу</div>
                   <div className="text-3xl font-bold text-green-600">{results.overallQuality}%</div>
+                </div>
+                <div className="bg-gradient-to-r from-orange-50 to-yellow-50 p-4 rounded-lg">
+                  <div className="text-sm text-gray-600">Успеваемость по классу</div>
+                  <div className="text-3xl font-bold text-orange-600">{results.overallPerformance}%</div>
                 </div>
               </div>
               
@@ -341,6 +366,7 @@ const ClassCalculator = () => {
                     <TableHead>Предмет</TableHead>
                     <TableHead>Средний балл</TableHead>
                     <TableHead>Качество знаний</TableHead>
+                    <TableHead>Успеваемость</TableHead>
                     <TableHead>Всего оценок</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -350,6 +376,7 @@ const ClassCalculator = () => {
                       <TableCell className="font-medium">{subject.name || 'Не указан'}</TableCell>
                       <TableCell>{subject.averageGrade || 0}</TableCell>
                       <TableCell>{subject.knowledgeQuality || 0}%</TableCell>
+                      <TableCell>{subject.performance || 0}%</TableCell>
                       <TableCell>
                         {subject.grade5 + subject.grade4 + subject.grade3 + subject.grade2}
                       </TableCell>
