@@ -129,7 +129,8 @@ const ClassCalculator = () => {
   const chartData = results?.subjects.map(subject => ({
     name: subject.name || 'Предмет',
     average: subject.averageGrade || 0,
-    quality: subject.knowledgeQuality || 0
+    quality: subject.knowledgeQuality || 0,
+    performance: subject.performance || 0
   })) || [];
 
   const downloadPDF = () => {
@@ -412,7 +413,8 @@ const ClassCalculator = () => {
                   <Tooltip />
                   <Legend />
                   <Bar dataKey="average" fill="#3B82F6" name="Средний балл" />
-                  <Bar dataKey="quality" fill="#10B981" name="Качество знаний %" />
+                  <Bar dataKey="quality" fill="#10B981" name="Качество знаний (%)" />
+                  <Bar dataKey="performance" fill="#F59E0B" name="Успеваемость (%)" />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>

@@ -139,6 +139,12 @@ const SubjectCalculator = () => {
     { name: 'Неудовлетворительно (2)', value: grades.grade2, color: '#EF4444' }
   ] : [];
 
+  const performanceData = results ? [
+    { name: 'Средний балл', value: results.averageGrade, color: '#3B82F6' },
+    { name: 'Качество знаний (%)', value: results.knowledgeQuality, color: '#10B981' },
+    { name: 'Успеваемость (%)', value: results.performance, color: '#F59E0B' }
+  ] : [];
+
   const barData = results ? [
     { grade: '5', count: grades.grade5, color: '#10B981' },
     { grade: '4', count: grades.grade4, color: '#3B82F6' },
@@ -322,6 +328,23 @@ const SubjectCalculator = () => {
                   <Tooltip />
                   <Legend />
                 </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          <Card className="md:col-span-2">
+            <CardHeader>
+              <CardTitle>Показатели успеваемости</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={performanceData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="value" fill="#3B82F6" />
+                </BarChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
