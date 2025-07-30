@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Calculator, BarChart3, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -6,8 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import ExcelJS from 'exceljs';
+import '../fonts/Roboto-Regular-normal.js';
 
 interface GradeData {
   grade5: number;
@@ -66,7 +67,22 @@ const SubjectCalculator = () => {
 
   const calculateMetrics = () => {
     const totalGrades = grades.grade5 + grades.grade4 + grades.grade3 + grades.grade2;
-    if (totalGrades === 0) return;
+    const studentCountNum = parseInt(studentCount) || 0;
+    
+    if (totalGrades === 0) {
+      alert('Ошибка: Введите хотя бы одну оценку!');
+      return;
+    }
+    
+    if (studentCountNum === 0) {
+      alert('Ошибка: Введите количество учеников!');
+      return;
+    }
+    
+    if (totalGrades !== studentCountNum) {
+      alert(`Ошибка: Количество учеников (${studentCountNum}) не совпадает с общим количеством оценок (${totalGrades})!`);
+      return;
+    }
 
     const weightedSum = (grades.grade5 * 5) + (grades.grade4 * 4) + (grades.grade3 * 3) + (grades.grade2 * 2);
     const averageGrade = weightedSum / totalGrades;
@@ -84,52 +100,247 @@ const SubjectCalculator = () => {
       averageGrade: parseFloat(averageGrade.toFixed(2)),
       knowledgeQuality: parseFloat(knowledgeQuality.toFixed(1)),
       performance: parseFloat(performance.toFixed(1)),
-      totalStudents: parseInt(studentCount) || totalGrades
+      totalStudents: studentCountNum
     });
   };
 
-  const downloadPDF = () => {
+
+
+  const downloadXLSX = async () => {
     if (!results) return;
-
-    const doc = new jsPDF();
     
-    // Заголовок
-    doc.setFontSize(20);
-    doc.text('EduMetrics - Отчет по предмету', 20, 20);
+    // Создаем новую рабочую книгу ExcelJS
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Отчет по предмету');
     
-    if (subjectName) {
-      doc.setFontSize(14);
-      doc.text(`Предмет: ${subjectName}`, 20, 35);
-    }
-    
-    // Основные показатели
-    doc.setFontSize(12);
-    doc.text('Основные показатели:', 20, 50);
-    doc.text(`Средний балл: ${results.averageGrade}`, 20, 65);
-    doc.text(`Качество знаний: ${results.knowledgeQuality}%`, 20, 75);
-    doc.text(`Успеваемость: ${results.performance}%`, 20, 85);
-    doc.text(`Всего оценок: ${grades.grade5 + grades.grade4 + grades.grade3 + grades.grade2}`, 20, 95);
-    
-    // Таблица с распределением оценок
-    const totalGrades = grades.grade5 + grades.grade4 + grades.grade3 + grades.grade2;
-    const tableData = [
-      ['Оценка', 'Количество', 'Процент от общего числа'],
-      ['5 (Отлично)', grades.grade5.toString(), `${((grades.grade5 / totalGrades) * 100).toFixed(1)}%`],
-      ['4 (Хорошо)', grades.grade4.toString(), `${((grades.grade4 / totalGrades) * 100).toFixed(1)}%`],
-      ['3 (Удовлетворительно)', grades.grade3.toString(), `${((grades.grade3 / totalGrades) * 100).toFixed(1)}%`],
-      ['2 (Неудовлетворительно)', grades.grade2.toString(), `${((grades.grade2 / totalGrades) * 100).toFixed(1)}%`]
+    // Настройки ширины колонок
+    worksheet.columns = [
+      { header: '', key: 'count', width: 18 },
+      { header: 'Количество', key: 'count', width: 18 },
+      { header: 'Процент от общего числа', key: 'percentage', width: 22 }
     ];
+    
+    // Добавляем заголовок с градиентным эффектом
+    const titleRow = worksheet.addRow(['EduMetrics - Отчет по предмету']);
+    titleRow.font = { bold: true, size: 18, color: { argb: 'FFFFFFFF' } };
+    titleRow.alignment = { horizontal: 'center', vertical: 'middle' };
+    titleRow.height = 35;
+    worksheet.mergeCells('A1:C1');
+    
+    // Создаем градиентный фон для заголовка
+    titleRow.getCell(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FF2563EB' }
+    };
+    
+    // Добавляем тень для заголовка
+    titleRow.getCell(1).border = {
+      bottom: { style: 'medium', color: { argb: 'FF1E40AF' } }
+    };
 
-    (doc as any).autoTable({
-      head: [tableData[0]],
-      body: tableData.slice(1),
-      startY: 110,
-      theme: 'grid'
+
+
+    // Пустая строка
+    worksheet.addRow([]);
+    
+    // Информация о предмете с современным дизайном
+    const subjectRow = worksheet.addRow(['Предмет:', subjectName || 'Не указан']);
+    subjectRow.font = { bold: true, size: 14, color: { argb: 'FF2563EB' } };
+    subjectRow.height = 25;
+    subjectRow.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF0F4F8' } };
+    subjectRow.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF8FAFC' } };
+    worksheet.mergeCells('A2:C2');
+    
+    // Добавляем границы для секции предмета
+    subjectRow.getCell(1).border = {
+      top: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+      bottom: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+      left: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+      right: { style: 'thin', color: { argb: 'FFE2E8F0' } }
+    };
+    
+    // Информация о количестве учеников
+    const studentsRow = worksheet.addRow(['Колл. учеников:', results.totalStudents]);
+    studentsRow.font = { bold: true, size: 14, color: { argb: 'FF2563EB' } };
+    studentsRow.height = 25;
+    studentsRow.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF0F4F8' } };
+    studentsRow.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF8FAFC' } };
+    worksheet.mergeCells('A3:C3');
+    
+    // Добавляем границы для секции количества учеников
+    studentsRow.getCell(1).border = {
+      top: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+      bottom: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+      left: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+      right: { style: 'thin', color: { argb: 'FFE2E8F0' } }
+    };
+    
+    // Пустая строка
+    worksheet.addRow([]);
+    
+    // Основные показатели с карточным дизайном
+    const indicatorsRow = worksheet.addRow(['Основные показатели:']);
+    indicatorsRow.font = { bold: true, size: 13, color: { argb: 'FFFFFFFF' } };
+    indicatorsRow.height = 28;
+    indicatorsRow.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2563EB' } };
+    indicatorsRow.alignment = { horizontal: 'center', vertical: 'middle' };
+    worksheet.mergeCells('A7:C7');
+  
+    // Данные показателей с цветовым кодированием
+    const metricsData = [
+      ['Средний балл:', results.averageGrade, '📊'],
+      ['Качество знаний:', `${results.knowledgeQuality}%`, '📈'],
+      ['Успеваемость:', `${results.performance}%`, '🎯'],
+      ['Всего оценок:', grades.grade5 + grades.grade4 + grades.grade3 + grades.grade2, '📋']
+    ];
+    
+    metricsData.forEach((data, index) => {
+      const row = worksheet.addRow(data);
+      row.height = 22;
+      
+      // Стили для меток
+      row.getCell(1).font = { bold: true, size: 11, color: { argb: 'FF374151' } };
+      row.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF9FAFB' } };
+      
+      // Стили для значений с цветовым кодированием
+      const colors = ['FF3B82F6', 'FF10B981', 'FFF59E0B', 'FF8B5CF6'];
+      row.getCell(2).font = { bold: true, size: 12, color: { argb: 'FFFFFFFF' } };
+      row.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: colors[index] } };
+      row.getCell(2).alignment = { horizontal: 'center' };
+      
+      // Стили для иконок
+      row.getCell(3).font = { size: 12 };
+      row.getCell(3).alignment = { horizontal: 'center' };
+      
+      // Границы для карточек
+      row.eachCell((cell) => {
+        cell.border = {
+          top: { style: 'thin', color: { argb: 'FFE5E7EB' } },
+          bottom: { style: 'thin', color: { argb: 'FFE5E7EB' } },
+          left: { style: 'thin', color: { argb: 'FFE5E7EB' } },
+          right: { style: 'thin', color: { argb: 'FFE5E7EB' } }
+        };
+      });
     });
-
-    // Сохранение файла
-    const fileName = subjectName ? `${subjectName}_отчет.pdf` : 'отчет_по_предмету.pdf';
-    doc.save(fileName);
+    
+    // Пустая строка
+    worksheet.addRow([]);
+    
+    // Заголовок таблицы с современным стилем
+    const tableTitleRow = worksheet.addRow(['Распределение оценок:']);
+    tableTitleRow.font = { bold: true, size: 13, color: { argb: 'FFFFFFFF' } };
+    tableTitleRow.height = 28;
+    tableTitleRow.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2563EB' } };
+    tableTitleRow.alignment = { horizontal: 'center', vertical: 'middle' };
+    worksheet.mergeCells('A13:C13');
+    
+    // Добавляем границы для заголовка таблицы
+    tableTitleRow.getCell(1).border = {
+      top: { style: 'thin', color: { argb: 'FF2563EB' } },
+      bottom: { style: 'thin', color: { argb: 'FF2563EB' } },
+      left: { style: 'thin', color: { argb: 'FF2563EB' } },
+      right: { style: 'thin', color: { argb: 'FF2563EB' } }
+    };
+    
+    // Пустая строка
+    worksheet.addRow([]);
+    
+    // Заголовки таблицы с улучшенным дизайном
+    const headerRow = worksheet.addRow(['Оценка', 'Количество', 'Процент от общего числа']);
+    headerRow.height = 25;
+    headerRow.font = { bold: true, size: 11, color: { argb: 'FFFFFFFF' } };
+    headerRow.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E40AF' } };
+    headerRow.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E40AF' } };
+    headerRow.getCell(3).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E40AF' } };
+    headerRow.alignment = { horizontal: 'center', vertical: 'middle' };
+    
+    // Границы для заголовков таблицы
+    headerRow.eachCell((cell) => {
+      cell.border = {
+        top: { style: 'thin', color: { argb: 'FF1E40AF' } },
+        bottom: { style: 'thin', color: { argb: 'FF1E40AF' } },
+        left: { style: 'thin', color: { argb: 'FF1E40AF' } },
+        right: { style: 'thin', color: { argb: 'FF1E40AF' } }
+      };
+    });
+    
+    // Добавляем данные по оценкам с цветовым кодированием
+    const totalGrades = grades.grade5 + grades.grade4 + grades.grade3 + grades.grade2;
+    const gradeData = [
+      ['5 (Отлично)', grades.grade5, `${((grades.grade5 / totalGrades) * 100).toFixed(1)}%`],
+      ['4 (Хорошо)', grades.grade4, `${((grades.grade4 / totalGrades) * 100).toFixed(1)}%`],
+      ['3 (Удовлетворительно)', grades.grade3, `${((grades.grade3 / totalGrades) * 100).toFixed(1)}%`],
+      ['2 (Неудовлетворительно)', grades.grade2, `${((grades.grade2 / totalGrades) * 100).toFixed(1)}%`]
+    ];
+    
+    const gradeColors = ['FF10B981', 'FF3B82F6', 'FFF59E0B', 'FFEF4444'];
+    
+    gradeData.forEach((data, index) => {
+      const dataRow = worksheet.addRow(data);
+      dataRow.height = 22;
+      
+      // Стили для названий оценок
+      dataRow.getCell(1).font = { bold: true, size: 11, color: { argb: 'FF374151' } };
+      dataRow.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF9FAFB' } };
+      
+      // Стили для количества с цветовым кодированием
+      dataRow.getCell(2).font = { bold: true, size: 11, color: { argb: 'FFFFFFFF' } };
+      dataRow.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: gradeColors[index] } };
+      dataRow.getCell(2).alignment = { horizontal: 'center' };
+      
+      // Стили для процентов
+      dataRow.getCell(3).font = { size: 11, color: { argb: 'FF6B7280' } };
+      dataRow.getCell(3).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF8FAFC' } };
+      dataRow.getCell(3).alignment = { horizontal: 'center' };
+      
+      // Современные границы
+      dataRow.eachCell((cell) => {
+        cell.border = {
+          top: { style: 'thin', color: { argb: 'FFE5E7EB' } },
+          bottom: { style: 'thin', color: { argb: 'FFE5E7EB' } },
+          left: { style: 'thin', color: { argb: 'FFE5E7EB' } },
+          right: { style: 'thin', color: { argb: 'FFE5E7EB' } }
+        };
+      });
+    });
+    
+    // Границы для заголовков таблицы
+   // headerRow.eachCell((cell) => {
+    //  cell.border = {
+    //   top: { style: 'thin', color: { argb: 'FF1E40AF' } },
+    //    bottom: { style: 'thin', color: { argb: 'FF1E40AF' } },
+    //   left: { style: 'thin', color: { argb: 'FF1E40AF' } },
+    //    right: { style: 'thin', color: { argb: 'FF1E40AF' } }
+    //  };
+    //});
+    
+    // Добавляем итоговую строку
+    const totalRow = worksheet.addRow(['ИТОГО:', totalGrades, '100%']);
+    totalRow.height = 25;
+    totalRow.getCell(1).font = { bold: true, size: 12, color: { argb: 'FFFFFFFF' } };
+    totalRow.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2563EB' } };
+    totalRow.getCell(2).font = { bold: true, size: 12, color: { argb: 'FFFFFFFF' } };
+    totalRow.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2563EB' } };
+    totalRow.getCell(2).alignment = { horizontal: 'center' };
+    totalRow.getCell(3).font = { bold: true, size: 12, color: { argb: 'FFFFFFFF' } };
+    totalRow.getCell(3).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2563EB' } };
+    totalRow.getCell(3).alignment = { horizontal: 'center' };
+    
+    // Границы для итоговой строки
+    totalRow.eachCell((cell) => {
+      cell.border = {
+        top: { style: 'medium', color: { argb: 'FF2563EB' } },
+        bottom: { style: 'medium', color: { argb: 'FF2563EB' } },
+        left: { style: 'medium', color: { argb: 'FF2563EB' } },
+        right: { style: 'medium', color: { argb: 'FF2563EB' } }
+      };
+    });
+    
+    // Сохраняем файл
+    const fileName = subjectName ? `${subjectName}_отчет.xlsx` : 'отчет_по_предмету.xlsx';
+    const buffer = await workbook.xlsx.writeBuffer();
+    saveAs(new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), fileName);
   };
 
   const pieData = results ? [
@@ -274,10 +485,12 @@ const SubjectCalculator = () => {
             <CardHeader>
               <CardTitle className="text-blue-600 flex items-center justify-between">
                 Результаты расчёта
-                <Button onClick={downloadPDF} variant="outline" size="sm" className="ml-2">
-                  <Download className="w-4 h-4 mr-2" />
-                  Скачать отчёт
-                </Button>
+                <div className="flex gap-2">
+                  <Button onClick={downloadXLSX} variant="outline" size="sm">
+                    <Download className="w-4 h-4 mr-2" />
+                    Скачать XLSX
+                  </Button>
+                </div>
               </CardTitle>
               {subjectName && <CardDescription>Предмет: {subjectName}</CardDescription>}
             </CardHeader>
