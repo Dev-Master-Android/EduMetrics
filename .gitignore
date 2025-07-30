@@ -7,6 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+<<<<<<< HEAD
 # Dependencies
 node_modules
 npm-debug.log*
@@ -14,10 +15,14 @@ yarn-debug.log*
 yarn-error.log*
 
 # Build outputs
+=======
+node_modules
+>>>>>>> 8154a7e (first commit)
 dist
 dist-ssr
 *.local
 
+<<<<<<< HEAD
 # Environment variables
 .env
 .env.local
@@ -25,6 +30,8 @@ dist-ssr
 .env.test.local
 .env.production.local
 
+=======
+>>>>>>> 8154a7e (first commit)
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -35,8 +42,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+<<<<<<< HEAD
 
 # OS generated files
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+=======
+>>>>>>> 8154a7e (first commit)
