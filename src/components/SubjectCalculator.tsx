@@ -8,7 +8,6 @@ import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, 
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import ExcelJS from 'exceljs';
-import '../fonts/Roboto-Regular-normal.js';
 
 interface GradeData {
   grade5: number;
