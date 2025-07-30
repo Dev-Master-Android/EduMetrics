@@ -1,73 +1,97 @@
-# Welcome to your Lovable project
+# EduMetrics - Инструмент для расчёта успеваемости
 
-## Project info
+Веб-приложение для расчёта среднего балла и качества знаний учащихся.
 
-**URL**: https://lovable.dev/projects/6c1799da-1055-4341-b3fd-7633a14f4cbc
+## 🚀 Быстрый старт
 
-## How can I edit this code?
+### Локальная разработка
 
-There are several ways of editing your application.
+```bash
+# Установка зависимостей
+npm install
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/6c1799da-1055-4341-b3fd-7633a14f4cbc) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Запуск в режиме разработки
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Откройте [http://localhost:8080](http://localhost:8080) в браузере.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Запуск через batch файл (Windows)
 
-**Use GitHub Codespaces**
+Дважды кликните на файл `start.bat` в корне проекта.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 📊 Возможности
 
-## What technologies are used for this project?
+- **Анализ по предмету** - расчёт среднего балла и качества знаний для конкретного предмета
+- **Анализ по классу** - комплексный анализ успеваемости по всем предметам
+- **Визуализация данных** - графики и диаграммы результатов
+- **Экспорт данных** - сохранение результатов в Excel и PDF
 
-This project is built with:
+## 🛠 Технологии
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- **React 18** - современный UI фреймворк
+- **TypeScript** - типизированный JavaScript
+- **Vite** - быстрый сборщик
+- **Tailwind CSS** - утилитарный CSS фреймворк
+- **Shadcn/ui** - компоненты UI
+- **Recharts** - библиотека для графиков
+- **React Router** - клиентская маршрутизация
 
-## How can I deploy this project?
+## 📦 Структура проекта
 
-Simply open [Lovable](https://lovable.dev/projects/6c1799da-1055-4341-b3fd-7633a14f4cbc) and click on Share -> Publish.
+```
+src/
+├── components/          # React компоненты
+│   ├── ui/             # UI компоненты (shadcn/ui)
+│   ├── SubjectCalculator.tsx
+│   └── ClassCalculator.tsx
+├── pages/              # Страницы приложения
+│   ├── Index.tsx       # Главная страница
+│   └── NotFound.tsx    # 404 страница
+├── hooks/              # React хуки
+├── lib/                # Утилиты
+└── fonts/              # Шрифты
+```
 
-## Can I connect a custom domain to my Lovable project?
+## 🌐 Деплой
 
-Yes, you can!
+### GitHub Pages
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+Проект автоматически деплоится на GitHub Pages при пуше в ветку `main`.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+**URL сайта:** `https://[username].github.io/EduMetrics/`
+
+### Ручной деплой
+
+```bash
+# Сборка проекта
+npm run build
+
+# Просмотр сборки
+npm run preview
+```
+
+## 🔧 Настройка
+
+### Переменные окружения
+
+Создайте файл `.env.local` для локальных настроек:
+
+```env
+VITE_APP_TITLE=EduMetrics
+```
+
+## 📝 Лицензия
+
+MIT License
+
+## 🤝 Вклад в проект
+
+1. Форкните репозиторий
+2. Создайте ветку для новой функции
+3. Внесите изменения
+4. Создайте Pull Request
+
+## 📞 Поддержка
+
+Если у вас есть вопросы или проблемы, создайте Issue в репозитории.
