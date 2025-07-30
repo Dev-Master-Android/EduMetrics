@@ -1,8 +1,9 @@
 {
-  "name": "vite_react_shadcn_ts",
+  "name": "edumetrics",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://dev-master-android.github.io/knowledge-metrics-hub",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

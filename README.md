@@ -59,7 +59,7 @@ src/
 
 Проект автоматически деплоится на GitHub Pages при пуше в ветку `main`.
 
-**URL сайта:** `https://[username].github.io/EduMetrics/`
+**URL сайта:** `https://dev-master-android.github.io/knowledge-metrics-hub/`
 
 ### Ручной деплой
 
