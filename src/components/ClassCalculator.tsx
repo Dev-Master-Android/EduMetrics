@@ -13,7 +13,6 @@ import ExcelJS from 'exceljs';
 interface SubjectGrades {
   id: string;
   name: string;
-  studentCount: number;
   grade5: number;
   grade4: number;
   grade3: number;
@@ -35,6 +34,9 @@ const ClassCalculator = () => {
   const [className, setClassName] = useState(() => 
     localStorage.getItem('className') || ''
   );
+  const [studentCount, setStudentCount] = useState(() => 
+    parseInt(localStorage.getItem('classStudentCount') || '0')
+  );
   const [subjects, setSubjects] = useState<SubjectGrades[]>(() => {
     const saved = localStorage.getItem('classSubjects');
     return saved ? JSON.parse(saved) : [];
@@ -45,7 +47,6 @@ const ClassCalculator = () => {
     const newSubject: SubjectGrades = {
       id: Date.now().toString(),
       name: '',
-      studentCount: 0,
       grade5: 0,
       grade4: 0,
       grade3: 0,
@@ -98,8 +99,8 @@ const ClassCalculator = () => {
         return;
       }
       
-      if (subject.studentCount === 0) {
-        alert(`Ошибка: Введите количество учеников для предмета "${subject.name}"!`);
+      if (studentCount === 0) {
+        alert(`Ошибка: Введите количество учеников в классе!`);
         return;
       }
       
@@ -108,8 +109,8 @@ const ClassCalculator = () => {
         return;
       }
       
-      if (totalGrades !== subject.studentCount) {
-        alert(`Ошибка: Количество учеников (${subject.studentCount}) не совпадает с общим количеством оценок (${totalGrades}) для предмета "${subject.name}"!`);
+      if (totalGrades !== studentCount) {
+        alert(`Ошибка: Количество учеников в классе (${studentCount}) не совпадает с общим количеством оценок (${totalGrades}) для предмета "${subject.name}"!`);
         return;
       }
     }
@@ -160,6 +161,7 @@ const ClassCalculator = () => {
 
     // Сохраняем данные в localStorage
     localStorage.setItem('className', className);
+    localStorage.setItem('classStudentCount', studentCount.toString());
     localStorage.setItem('classSubjects', JSON.stringify(subjects));
 
     setResults({
@@ -239,8 +241,7 @@ const ClassCalculator = () => {
     };
     
     // Информация о количестве учеников
-    const totalStudents = results.subjects.length > 0 ? results.subjects[0].studentCount : 0;
-    const studentsRow = worksheet.addRow(['Количество учеников:', totalStudents]);
+    const studentsRow = worksheet.addRow(['Количество учеников:', studentCount]);
     studentsRow.font = { bold: true, size: 14, color: { argb: 'FF2563EB' } };
     studentsRow.height = 25;
     studentsRow.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF0F4F8' } };
@@ -484,6 +485,21 @@ const ClassCalculator = () => {
                 />
           </div>
 
+          <div>
+            <Label htmlFor="studentCount">Количество учащихся</Label>
+            <Input
+              id="studentCount"
+              type="number"
+              value={studentCount === 0 ? '' : studentCount}
+              onChange={(e) => {
+                const value = parseInt(e.target.value) || 0;
+                setStudentCount(value);
+                localStorage.setItem('classStudentCount', value.toString());
+              }}
+              placeholder="Например: 25"
+            />
+          </div>
+
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">Предметы</h3>
             <Button onClick={addSubject} variant="outline" size="sm">
@@ -495,24 +511,13 @@ const ClassCalculator = () => {
           <div className="space-y-4">
             {subjects.map((subject, index) => (
               <Card key={subject.id} className="p-4">
-                <div className="grid grid-cols-1 md:grid-cols-7 gap-4 items-end">
+                <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
                   <div>
                     <Label>Название предмета</Label>
                     <Input
                       value={subject.name}
                       onChange={(e) => updateSubject(subject.id, 'name', e.target.value)}
                       placeholder="Предмет"
-                    />
-                  </div>
-                  <div>
-                    <Label>Кол-во уч-ся</Label>
-                    <Input
-                      type="number"
-                      value={subject.studentCount === 0 ? '' : subject.studentCount}
-                      onChange={(e) => updateSubject(subject.id, 'studentCount', parseInt(e.target.value) || 0)}
-                      onFocus={() => handleNumericInputFocus(subject.id, 'studentCount', subject.studentCount)}
-                      onBlur={(e) => handleNumericInputBlur(subject.id, 'studentCount', e.target.value)}
-                      placeholder="0"
                     />
                   </div>
                   <div>
