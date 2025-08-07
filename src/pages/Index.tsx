@@ -17,8 +17,8 @@ const Index = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-6">
-            <div className="w-24 h-24 bg-gradient-to-br from-accent to-accent/80 rounded-full flex items-center justify-center shadow-lg">
-              <img src={pencilMascot} alt="EduMetrics Mascot" className="w-16 h-16" />
+            <div className="w-24 h-24 bg-gradient-to-br from-accent to-accent/80 rounded-full flex items-center justify-center shadow-lg overflow-hidden">
+              <img src={pencilMascot} alt="EduMetrics Mascot" className="w-16 h-16 rounded-full object-cover" />
             </div>
           </div>
           <h1 className="text-4xl md:text-6xl font-bold text-primary mb-4">
