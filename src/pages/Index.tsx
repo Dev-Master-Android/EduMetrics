@@ -1,9 +1,10 @@
 
 import { useState } from 'react';
-import { Calculator, Users, BookOpen, BarChart3 } from 'lucide-react';
+import { Calculator, Users, BookOpen, BarChart3, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import SubjectCalculator from '@/components/SubjectCalculator';
 import ClassCalculator from '@/components/ClassCalculator';
 import pencilMascot from '@/assets/pencil-mascot.png';
@@ -130,27 +131,119 @@ const Index = () => {
               </CardHeader>
               <CardContent className="p-8 pt-0">
                 <div className="grid md:grid-cols-3 gap-12">
-                  <div className="text-center stagger-item group hover:scale-105 transition-all duration-300">
-                    <div className="w-20 h-20 bg-gradient-to-br from-accent/20 to-accent/30 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-all duration-300 icon-float">
-                      <Calculator className="w-10 h-10 text-accent" />
-                    </div>
-                    <h3 className="font-bold text-primary mb-4 text-2xl group-hover:text-accent transition-colors">Точные расчёты</h3>
-                    <p className="text-muted-foreground text-lg leading-relaxed">Автоматический расчёт среднего балла и качества знаний</p>
-                  </div>
-                  <div className="text-center stagger-item group hover:scale-105 transition-all duration-300">
-                    <div className="w-20 h-20 bg-gradient-to-br from-secondary/20 to-secondary/30 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-all duration-300 icon-float">
-                      <BarChart3 className="w-10 h-10 text-secondary" />
-                    </div>
-                    <h3 className="font-bold text-primary mb-4 text-2xl group-hover:text-secondary transition-colors">Визуализация</h3>
-                    <p className="text-muted-foreground text-lg leading-relaxed">Наглядные диаграммы и графики результатов</p>
-                  </div>
-                  <div className="text-center stagger-item group hover:scale-105 transition-all duration-300">
-                    <div className="w-20 h-20 bg-gradient-to-br from-primary/20 to-primary/30 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-all duration-300 icon-float">
-                      <Users className="w-10 h-10 text-primary" />
-                    </div>
-                    <h3 className="font-bold text-primary mb-4 text-2xl group-hover:text-primary transition-colors">Удобство</h3>
-                    <p className="text-muted-foreground text-lg leading-relaxed">Простой и интуитивный интерфейс для учителей</p>
-                  </div>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <div className="text-center stagger-item group hover:scale-105 transition-all duration-300 cursor-pointer">
+                        <div className="w-20 h-20 bg-gradient-to-br from-accent/20 to-accent/30 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-all duration-300 icon-float">
+                          <Calculator className="w-10 h-10 text-accent" />
+                        </div>
+                        <h3 className="font-bold text-primary mb-4 text-2xl group-hover:text-accent transition-colors flex items-center justify-center gap-2">
+                          Точные расчёты
+                          <Info className="w-5 h-5 opacity-70" />
+                        </h3>
+                        <p className="text-muted-foreground text-lg leading-relaxed">Автоматический расчёт среднего балла и качества знаний</p>
+                      </div>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle className="text-2xl text-accent flex items-center gap-3">
+                          <Calculator className="w-8 h-8" />
+                          Точные расчёты
+                        </DialogTitle>
+                        <DialogDescription className="text-lg leading-relaxed mt-4">
+                          <p className="mb-4">
+                            EduMetrics использует проверенные математические формулы для точного расчёта успеваемости:
+                          </p>
+                          <ul className="list-disc pl-6 space-y-2">
+                            <li><strong>Средний балл:</strong> Сумма всех оценок разделённая на количество оценок</li>
+                            <li><strong>Качество знаний:</strong> Процент учащихся с оценками "4" и "5"</li>
+                            <li><strong>Успеваемость:</strong> Процент учащихся без оценки "2"</li>
+                            <li><strong>СОУ (Степень обученности учащихся):</strong> Комплексный показатель качества образования</li>
+                          </ul>
+                          <p className="mt-4">
+                            Все расчёты выполняются автоматически с максимальной точностью, исключая возможность ошибок при ручном подсчёте.
+                          </p>
+                        </DialogDescription>
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
+
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <div className="text-center stagger-item group hover:scale-105 transition-all duration-300 cursor-pointer">
+                        <div className="w-20 h-20 bg-gradient-to-br from-secondary/20 to-secondary/30 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-all duration-300 icon-float">
+                          <BarChart3 className="w-10 h-10 text-secondary" />
+                        </div>
+                        <h3 className="font-bold text-primary mb-4 text-2xl group-hover:text-secondary transition-colors flex items-center justify-center gap-2">
+                          Визуализация
+                          <Info className="w-5 h-5 opacity-70" />
+                        </h3>
+                        <p className="text-muted-foreground text-lg leading-relaxed">Наглядные диаграммы и графики результатов</p>
+                      </div>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle className="text-2xl text-secondary flex items-center gap-3">
+                          <BarChart3 className="w-8 h-8" />
+                          Визуализация данных
+                        </DialogTitle>
+                        <DialogDescription className="text-lg leading-relaxed mt-4">
+                          <p className="mb-4">
+                            Результаты анализа представлены в удобном графическом виде:
+                          </p>
+                          <ul className="list-disc pl-6 space-y-2">
+                            <li><strong>Круговые диаграммы:</strong> Распределение оценок по предметам</li>
+                            <li><strong>Столбчатые графики:</strong> Сравнение показателей между классами</li>
+                            <li><strong>Таблицы:</strong> Детальная статистика в структурированном виде</li>
+                            <li><strong>Цветовое кодирование:</strong> Быстрая оценка критических показателей</li>
+                            <li><strong>Экспорт отчётов:</strong> Сохранение в PDF и Excel форматах</li>
+                          </ul>
+                          <p className="mt-4">
+                            Визуальное представление данных помогает учителям и администрации быстро выявлять тенденции и принимать обоснованные решения.
+                          </p>
+                        </DialogDescription>
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
+
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <div className="text-center stagger-item group hover:scale-105 transition-all duration-300 cursor-pointer">
+                        <div className="w-20 h-20 bg-gradient-to-br from-primary/20 to-primary/30 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-all duration-300 icon-float">
+                          <Users className="w-10 h-10 text-primary" />
+                        </div>
+                        <h3 className="font-bold text-primary mb-4 text-2xl group-hover:text-primary transition-colors flex items-center justify-center gap-2">
+                          Удобство
+                          <Info className="w-5 h-5 opacity-70" />
+                        </h3>
+                        <p className="text-muted-foreground text-lg leading-relaxed">Простой и интуитивный интерфейс для учителей</p>
+                      </div>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle className="text-2xl text-primary flex items-center gap-3">
+                          <Users className="w-8 h-8" />
+                          Удобство использования
+                        </DialogTitle>
+                        <DialogDescription className="text-lg leading-relaxed mt-4">
+                          <p className="mb-4">
+                            EduMetrics разработан с учётом потребностей педагогов:
+                          </p>
+                          <ul className="list-disc pl-6 space-y-2">
+                            <li><strong>Интуитивный интерфейс:</strong> Минимальное время на освоение системы</li>
+                            <li><strong>Быстрый ввод данных:</strong> Удобные формы для массового ввода оценок</li>
+                            <li><strong>Автосохранение:</strong> Данные сохраняются автоматически</li>
+                            <li><strong>Мобильная версия:</strong> Работа с любого устройства</li>
+                            <li><strong>Справочная система:</strong> Встроенная помощь и подсказки</li>
+                            <li><strong>Настройка под школу:</strong> Адаптация под особенности учебного процесса</li>
+                          </ul>
+                          <p className="mt-4">
+                            Система экономит время учителей, позволяя сосредоточиться на образовательном процессе, а не на рутинных расчётах.
+                          </p>
+                        </DialogDescription>
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               </CardContent>
             </Card>
