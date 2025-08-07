@@ -15,59 +15,68 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 stagger-item">
           <div className="flex justify-center mb-6">
-            <div className="w-24 h-24 bg-gradient-to-br from-accent to-accent/80 rounded-full flex items-center justify-center shadow-lg overflow-hidden">
-              <img src={pencilMascot} alt="EduMetrics Mascot" className="w-16 h-16 rounded-full object-cover" />
+            <div className="w-32 h-32 md:w-40 md:h-40 bg-gradient-to-br from-accent to-accent/80 rounded-full flex items-center justify-center shadow-lg overflow-hidden pulse-glow logo-bounce">
+              <img src={pencilMascot} alt="EduMetrics Mascot" className="w-full h-full rounded-full object-cover" />
             </div>
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-primary mb-4">
+          <h1 className="text-5xl md:text-7xl font-bold text-primary mb-6 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
             EduMetrics
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Инструмент для расчёта среднего балла и качества знаний учащихся
           </p>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8 bg-card border-2 h-12">
-            <TabsTrigger value="home" className="flex items-center gap-2 text-primary data-[state=active]:bg-accent data-[state=active]:text-white">
-              <BookOpen className="w-4 h-4" />
-              Главная
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full stagger-item">
+          <TabsList className="grid w-full grid-cols-3 mb-8 bg-card border-2 h-16 md:h-20 rounded-2xl p-2 shadow-lg">
+            <TabsTrigger 
+              value="home" 
+              className="flex items-center gap-2 text-primary data-[state=active]:bg-accent data-[state=active]:text-white transition-all duration-300 rounded-xl hover:scale-105 data-[state=active]:shadow-lg"
+            >
+              <BookOpen className="w-5 h-5 icon-float" />
+              <span className="text-lg font-medium">Главная</span>
             </TabsTrigger>
-            <TabsTrigger value="subject" className="flex items-center gap-2 text-primary data-[state=active]:bg-accent data-[state=active]:text-white">
-              <Calculator className="w-4 h-4" />
-              По предмету
+            <TabsTrigger 
+              value="subject" 
+              className="flex items-center gap-2 text-primary data-[state=active]:bg-accent data-[state=active]:text-white transition-all duration-300 rounded-xl hover:scale-105 data-[state=active]:shadow-lg"
+            >
+              <Calculator className="w-5 h-5 icon-float" />
+              <span className="text-lg font-medium">Отчет по предмету</span>
             </TabsTrigger>
-            <TabsTrigger value="class" className="flex items-center gap-2 text-primary data-[state=active]:bg-secondary data-[state=active]:text-white">
-              <Users className="w-4 h-4" />
-              По классу
+            <TabsTrigger 
+              value="class" 
+              className="flex items-center gap-2 text-primary data-[state=active]:bg-secondary data-[state=active]:text-white transition-all duration-300 rounded-xl hover:scale-105 data-[state=active]:shadow-lg"
+            >
+              <Users className="w-5 h-5 icon-float" />
+              <span className="text-lg font-medium">Отчет по классу</span>
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="home" className="space-y-8">
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <TabsContent value="home" className="tab-content space-y-12">
+            <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
               <Card 
-                className="hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-accent/20 group" 
+                className="card-hover cursor-pointer border-2 border-transparent hover:border-accent/30 group stagger-item rounded-3xl overflow-hidden" 
                 onClick={() => setActiveTab('subject')}
                 style={{ boxShadow: 'var(--shadow-soft)' }}
               >
-                <CardHeader className="pb-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center group-hover:bg-accent/20 transition-colors">
-                      <Calculator className="w-8 h-8 text-accent" />
+                <CardHeader className="pb-8 p-8">
+                  <div className="flex items-center gap-6">
+                    <div className="w-20 h-20 bg-gradient-to-br from-accent/20 to-accent/30 rounded-3xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 icon-float">
+                      <Calculator className="w-10 h-10 text-accent" />
                     </div>
                     <div>
-                      <CardTitle className="text-primary text-2xl mb-2">Анализ по предмету</CardTitle>
-                      <CardDescription className="text-muted-foreground text-base">
+                      <CardTitle className="text-primary text-3xl mb-3 group-hover:text-accent transition-colors">Анализ по предмету</CardTitle>
+                      <CardDescription className="text-muted-foreground text-lg leading-relaxed">
                         Рассчитайте средний балл и качество знаний для конкретного предмета
                       </CardDescription>
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-8 pt-0">
                   <Button 
-                    className="w-full text-white font-medium rounded-xl h-14 text-lg" 
+                    className="w-full text-white font-semibold rounded-2xl h-16 text-xl btn-shimmer group-hover:scale-105 transition-all duration-300" 
                     style={{ 
                       background: 'var(--gradient-primary)',
                       border: 'none'
@@ -79,26 +88,26 @@ const Index = () => {
               </Card>
 
               <Card 
-                className="hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-secondary/20 group" 
+                className="card-hover cursor-pointer border-2 border-transparent hover:border-secondary/30 group stagger-item rounded-3xl overflow-hidden" 
                 onClick={() => setActiveTab('class')}
                 style={{ boxShadow: 'var(--shadow-soft)' }}
               >
-                <CardHeader className="pb-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-secondary/10 rounded-2xl flex items-center justify-center group-hover:bg-secondary/20 transition-colors">
-                      <Users className="w-8 h-8 text-secondary" />
+                <CardHeader className="pb-8 p-8">
+                  <div className="flex items-center gap-6">
+                    <div className="w-20 h-20 bg-gradient-to-br from-secondary/20 to-secondary/30 rounded-3xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 icon-float">
+                      <Users className="w-10 h-10 text-secondary" />
                     </div>
                     <div>
-                      <CardTitle className="text-primary text-2xl mb-2">Анализ по классу</CardTitle>
-                      <CardDescription className="text-muted-foreground text-base">
+                      <CardTitle className="text-primary text-3xl mb-3 group-hover:text-secondary transition-colors">Анализ по классу</CardTitle>
+                      <CardDescription className="text-muted-foreground text-lg leading-relaxed">
                         Комплексный анализ успеваемости по всем предметам в классе
                       </CardDescription>
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-8 pt-0">
                   <Button 
-                    className="w-full text-white font-medium rounded-xl h-14 text-lg" 
+                    className="w-full text-white font-semibold rounded-2xl h-16 text-xl btn-shimmer group-hover:scale-105 transition-all duration-300" 
                     style={{ 
                       background: 'var(--gradient-secondary)',
                       border: 'none'
@@ -111,45 +120,47 @@ const Index = () => {
             </div>
 
             <Card 
-              className="border-2 border-primary/10 max-w-4xl mx-auto"
+              className="border-2 border-primary/10 max-w-6xl mx-auto rounded-3xl stagger-item card-hover"
               style={{ boxShadow: 'var(--shadow-soft)' }}
             >
-              <CardHeader className="pb-6">
-                <CardTitle className="text-primary text-2xl text-center">Преимущества EduMetrics</CardTitle>
+              <CardHeader className="pb-8 p-8">
+                <CardTitle className="text-primary text-4xl text-center mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                  Преимущества EduMetrics
+                </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-3 gap-8">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <Calculator className="w-8 h-8 text-accent" />
+              <CardContent className="p-8 pt-0">
+                <div className="grid md:grid-cols-3 gap-12">
+                  <div className="text-center stagger-item group hover:scale-105 transition-all duration-300">
+                    <div className="w-20 h-20 bg-gradient-to-br from-accent/20 to-accent/30 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-all duration-300 icon-float">
+                      <Calculator className="w-10 h-10 text-accent" />
                     </div>
-                    <h3 className="font-semibold text-primary mb-3 text-lg">Точные расчёты</h3>
-                    <p className="text-muted-foreground">Автоматический расчёт среднего балла и качества знаний</p>
+                    <h3 className="font-bold text-primary mb-4 text-2xl group-hover:text-accent transition-colors">Точные расчёты</h3>
+                    <p className="text-muted-foreground text-lg leading-relaxed">Автоматический расчёт среднего балла и качества знаний</p>
                   </div>
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-secondary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <BarChart3 className="w-8 h-8 text-secondary" />
+                  <div className="text-center stagger-item group hover:scale-105 transition-all duration-300">
+                    <div className="w-20 h-20 bg-gradient-to-br from-secondary/20 to-secondary/30 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-all duration-300 icon-float">
+                      <BarChart3 className="w-10 h-10 text-secondary" />
                     </div>
-                    <h3 className="font-semibold text-primary mb-3 text-lg">Визуализация</h3>
-                    <p className="text-muted-foreground">Наглядные диаграммы и графики результатов</p>
+                    <h3 className="font-bold text-primary mb-4 text-2xl group-hover:text-secondary transition-colors">Визуализация</h3>
+                    <p className="text-muted-foreground text-lg leading-relaxed">Наглядные диаграммы и графики результатов</p>
                   </div>
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <Users className="w-8 h-8 text-primary" />
+                  <div className="text-center stagger-item group hover:scale-105 transition-all duration-300">
+                    <div className="w-20 h-20 bg-gradient-to-br from-primary/20 to-primary/30 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-all duration-300 icon-float">
+                      <Users className="w-10 h-10 text-primary" />
                     </div>
-                    <h3 className="font-semibold text-primary mb-3 text-lg">Удобство</h3>
-                    <p className="text-muted-foreground">Простой и интуитивный интерфейс для учителей</p>
+                    <h3 className="font-bold text-primary mb-4 text-2xl group-hover:text-primary transition-colors">Удобство</h3>
+                    <p className="text-muted-foreground text-lg leading-relaxed">Простой и интуитивный интерфейс для учителей</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="subject">
+          <TabsContent value="subject" className="tab-content">
             <SubjectCalculator />
           </TabsContent>
 
-          <TabsContent value="class">
+          <TabsContent value="class" className="tab-content">
             <ClassCalculator />
           </TabsContent>
         </Tabs>
