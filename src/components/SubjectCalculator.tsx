@@ -20,6 +20,7 @@ interface Results {
   averageGrade: number;
   knowledgeQuality: number;
   performance: number;
+  sou: number;
   totalStudents: number;
 }
 
@@ -89,6 +90,9 @@ const SubjectCalculator = () => {
     const knowledgeQuality = (qualityGrades / totalGrades) * 100;
     const performanceGrades = grades.grade5 + grades.grade4 + grades.grade3;
     const performance = (performanceGrades / totalGrades) * 100;
+    
+    // Расчет СОУ (Степень обученности учащихся)
+    const sou = ((grades.grade5 * 100) + (grades.grade4 * 64) + (grades.grade3 * 36) + (grades.grade2 * 16)) / totalGrades;
 
     // Сохраняем данные в localStorage
     localStorage.setItem('subjectName', subjectName);
@@ -99,6 +103,7 @@ const SubjectCalculator = () => {
       averageGrade: parseFloat(averageGrade.toFixed(2)),
       knowledgeQuality: parseFloat(knowledgeQuality.toFixed(1)),
       performance: parseFloat(performance.toFixed(1)),
+      sou: parseFloat(sou.toFixed(1)),
       totalStudents: studentCountNum
     });
   };
@@ -191,6 +196,7 @@ const SubjectCalculator = () => {
       ['Средний балл:', results.averageGrade, '📊'],
       ['Качество знаний:', `${results.knowledgeQuality}%`, '📈'],
       ['Успеваемость:', `${results.performance}%`, '🎯'],
+      ['СОУ:', `${results.sou}%`, '🎓'],
       ['Всего оценок:', grades.grade5 + grades.grade4 + grades.grade3 + grades.grade2, '📋']
     ];
     
@@ -203,7 +209,7 @@ const SubjectCalculator = () => {
       row.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF9FAFB' } };
       
       // Стили для значений с цветовым кодированием
-      const colors = ['FF3B82F6', 'FF10B981', 'FFF59E0B', 'FF8B5CF6'];
+      const colors = ['FF3B82F6', 'FF10B981', 'FFF59E0B', 'FFFBBF24', 'FF8B5CF6'];
       row.getCell(2).font = { bold: true, size: 12, color: { argb: 'FFFFFFFF' } };
       row.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: colors[index] } };
       row.getCell(2).alignment = { horizontal: 'center' };
@@ -505,6 +511,10 @@ const SubjectCalculator = () => {
               <div className="bg-gradient-to-r from-orange-50 to-yellow-50 p-4 rounded-lg">
                 <div className="text-sm text-gray-600">Успеваемость</div>
                 <div className="text-3xl font-bold text-orange-600">{results.performance}%</div>
+              </div>
+              <div className="bg-gradient-to-r from-amber-50 to-yellow-50 p-4 rounded-lg">
+                <div className="text-sm text-gray-600">СОУ (Степень обученности учащихся)</div>
+                <div className="text-3xl font-bold text-amber-600">{results.sou}%</div>
               </div>
               <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg">
                 <div className="text-sm text-gray-600">Всего оценок</div>

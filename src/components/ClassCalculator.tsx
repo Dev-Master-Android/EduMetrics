@@ -20,6 +20,7 @@ interface SubjectGrades {
   averageGrade?: number;
   knowledgeQuality?: number;
   performance?: number;
+  sou?: number;
 }
 
 interface ClassResults {
@@ -28,6 +29,7 @@ interface ClassResults {
   overallAverage: number;
   overallQuality: number;
   overallPerformance: number;
+  overallSou: number;
 }
 
 const ClassCalculator = () => {
@@ -117,7 +119,7 @@ const ClassCalculator = () => {
 
     const calculatedSubjects = subjects.map(subject => {
       const totalGrades = subject.grade5 + subject.grade4 + subject.grade3 + subject.grade2;
-      if (totalGrades === 0) return { ...subject, averageGrade: 0, knowledgeQuality: 0, performance: 0 };
+      if (totalGrades === 0) return { ...subject, averageGrade: 0, knowledgeQuality: 0, performance: 0, sou: 0 };
 
       const weightedSum = (subject.grade5 * 5) + (subject.grade4 * 4) + (subject.grade3 * 3) + (subject.grade2 * 2);
       const averageGrade = weightedSum / totalGrades;
@@ -125,12 +127,16 @@ const ClassCalculator = () => {
       const knowledgeQuality = (qualityGrades / totalGrades) * 100;
       const performanceGrades = subject.grade5 + subject.grade4 + subject.grade3;
       const performance = (performanceGrades / totalGrades) * 100;
+      
+      // Расчет СОУ для предмета
+      const sou = ((subject.grade5 * 100) + (subject.grade4 * 64) + (subject.grade3 * 36) + (subject.grade2 * 16)) / totalGrades;
 
       return {
         ...subject,
         averageGrade: parseFloat(averageGrade.toFixed(2)),
         knowledgeQuality: parseFloat(knowledgeQuality.toFixed(1)),
-        performance: parseFloat(performance.toFixed(1))
+        performance: parseFloat(performance.toFixed(1)),
+        sou: parseFloat(sou.toFixed(1))
       };
     });
 
@@ -141,6 +147,7 @@ const ClassCalculator = () => {
     let totalClassWeightedSum = 0;
     let totalClassQualityGrades = 0;
     let totalClassPerformanceGrades = 0;
+    let totalClassSouSum = 0;
     
     validSubjects.forEach(subject => {
       const subjectTotalGrades = subject.grade5 + subject.grade4 + subject.grade3 + subject.grade2;
@@ -148,6 +155,7 @@ const ClassCalculator = () => {
       totalClassWeightedSum += (subject.grade5 * 5) + (subject.grade4 * 4) + (subject.grade3 * 3) + (subject.grade2 * 2);
       totalClassQualityGrades += subject.grade5 + subject.grade4;
       totalClassPerformanceGrades += subject.grade5 + subject.grade4 + subject.grade3;
+      totalClassSouSum += ((subject.grade5 * 100) + (subject.grade4 * 64) + (subject.grade3 * 36) + (subject.grade2 * 16));
     });
     
     // Средний балл класса = (Σ (оценка × количество)) / Общее количество оценок
@@ -158,6 +166,9 @@ const ClassCalculator = () => {
     
     // Успеваемость класса = (Общее количество "3", "4", "5") × 100% / (Общее количество оценок)
     const overallPerformance = totalClassGrades > 0 ? (totalClassPerformanceGrades / totalClassGrades) * 100 : 0;
+    
+    // СОУ класса = Σ(СОУ предмета × количество оценок по предмету) / Общее количество оценок
+    const overallSou = totalClassGrades > 0 ? totalClassSouSum / totalClassGrades : 0;
 
     // Сохраняем данные в localStorage
     localStorage.setItem('className', className);
@@ -169,7 +180,8 @@ const ClassCalculator = () => {
       subjects: calculatedSubjects,
       overallAverage: parseFloat(overallAverage.toFixed(2)),
       overallQuality: parseFloat(overallQuality.toFixed(1)),
-      overallPerformance: parseFloat(overallPerformance.toFixed(1))
+      overallPerformance: parseFloat(overallPerformance.toFixed(1)),
+      overallSou: parseFloat(overallSou.toFixed(1))
     });
   };
 
@@ -279,7 +291,8 @@ const ClassCalculator = () => {
     const metricsData = [
       ['Средний балл по классу:', results.overallAverage, '📊'],
       ['Качество знаний по классу:', `${results.overallQuality}%`, '📈'],
-      ['Успеваемость по классу:', `${results.overallPerformance}%`, '🎯']
+      ['Успеваемость по классу:', `${results.overallPerformance}%`, '🎯'],
+      ['СОУ по классу:', `${results.overallSou}%`, '🎓']
     ];
     
     metricsData.forEach((data, index) => {
@@ -291,7 +304,7 @@ const ClassCalculator = () => {
       row.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF9FAFB' } };
       
       // Стили для значений с цветовым кодированием
-      const colors = ['FF3B82F6', 'FF10B981', 'FFF59E0B'];
+      const colors = ['FF3B82F6', 'FF10B981', 'FFF59E0B', 'FFFBBF24'];
       row.getCell(2).font = { bold: true, size: 12, color: { argb: 'FFFFFFFF' } };
       row.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: colors[index] } };
       row.getCell(2).alignment = { horizontal: 'center' };
@@ -594,7 +607,7 @@ const ClassCalculator = () => {
               {results.className && <CardDescription>Класс: {results.className}</CardDescription>}
             </CardHeader>
             <CardContent>
-              <div className="grid md:grid-cols-3 gap-4">
+              <div className="grid md:grid-cols-4 gap-4">
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg">
                   <div className="text-sm text-gray-600">Средний балл по классу</div>
                   <div className="text-3xl font-bold text-blue-600">{results.overallAverage}</div>
@@ -606,6 +619,10 @@ const ClassCalculator = () => {
                 <div className="bg-gradient-to-r from-orange-50 to-yellow-50 p-4 rounded-lg">
                   <div className="text-sm text-gray-600">Успеваемость по классу</div>
                   <div className="text-3xl font-bold text-orange-600">{results.overallPerformance}%</div>
+                </div>
+                <div className="bg-gradient-to-r from-amber-50 to-yellow-50 p-4 rounded-lg">
+                  <div className="text-sm text-gray-600">СОУ по классу</div>
+                  <div className="text-3xl font-bold text-amber-600">{results.overallSou}%</div>
                 </div>
               </div>
               
@@ -630,6 +647,7 @@ const ClassCalculator = () => {
                     <TableHead>Средний балл</TableHead>
                     <TableHead>Качество знаний</TableHead>
                     <TableHead>Успеваемость</TableHead>
+                    <TableHead>СОУ</TableHead>
                     <TableHead>Всего оценок</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -640,6 +658,7 @@ const ClassCalculator = () => {
                       <TableCell>{subject.averageGrade || 0}</TableCell>
                       <TableCell>{subject.knowledgeQuality || 0}%</TableCell>
                       <TableCell>{subject.performance || 0}%</TableCell>
+                      <TableCell>{subject.sou || 0}%</TableCell>
                       <TableCell>
                         {subject.grade5 + subject.grade4 + subject.grade3 + subject.grade2}
                       </TableCell>
