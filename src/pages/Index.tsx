@@ -44,14 +44,14 @@ const Index = () => {
               className="flex items-center gap-2 text-primary data-[state=active]:bg-accent data-[state=active]:text-white transition-all duration-300 rounded-xl hover:scale-105 data-[state=active]:shadow-lg"
             >
               <Calculator className="w-5 h-5 icon-float" />
-              <span className="text-lg font-medium">Отчет по предмету</span>
+              <span className="text-lg font-medium">По предмету</span>
             </TabsTrigger>
             <TabsTrigger 
               value="class" 
               className="flex items-center gap-2 text-primary data-[state=active]:bg-secondary data-[state=active]:text-white transition-all duration-300 rounded-xl hover:scale-105 data-[state=active]:shadow-lg"
             >
               <Users className="w-5 h-5 icon-float" />
-              <span className="text-lg font-medium">Отчет по классу</span>
+              <span className="text-lg font-medium">По классу</span>
             </TabsTrigger>
           </TabsList>
 
