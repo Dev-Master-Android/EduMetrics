@@ -29,42 +29,37 @@ const Index = () => {
           </p>
         </div>
 
-        <div className="flex justify-center mb-8">
-          <div className="inline-flex bg-accent rounded-full p-1">
-            <Button 
-              variant={activeTab === 'home' ? 'default' : 'ghost'} 
-              className="rounded-full px-6"
-              onClick={() => setActiveTab('home')}
-            >
-              Главная
-            </Button>
-            <Button 
-              variant={activeTab === 'subject' ? 'default' : 'ghost'} 
-              className="rounded-full px-6"
-              onClick={() => setActiveTab('subject')}
-            >
-              Отчёты
-            </Button>
-          </div>
-        </div>
-
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-3 mb-8 bg-card border-2 h-12">
+            <TabsTrigger value="home" className="flex items-center gap-2 text-primary data-[state=active]:bg-accent data-[state=active]:text-white">
+              <BookOpen className="w-4 h-4" />
+              Главная
+            </TabsTrigger>
+            <TabsTrigger value="subject" className="flex items-center gap-2 text-primary data-[state=active]:bg-accent data-[state=active]:text-white">
+              <Calculator className="w-4 h-4" />
+              По предмету
+            </TabsTrigger>
+            <TabsTrigger value="class" className="flex items-center gap-2 text-primary data-[state=active]:bg-secondary data-[state=active]:text-white">
+              <Users className="w-4 h-4" />
+              По классу
+            </TabsTrigger>
+          </TabsList>
 
           <TabsContent value="home" className="space-y-8">
-            <div className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               <Card 
-                className="hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-accent/20" 
+                className="hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-accent/20 group" 
                 onClick={() => setActiveTab('subject')}
                 style={{ boxShadow: 'var(--shadow-soft)' }}
               >
-                <CardHeader className="pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center">
-                      <Calculator className="w-6 h-6 text-accent" />
+                <CardHeader className="pb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                      <Calculator className="w-8 h-8 text-accent" />
                     </div>
                     <div>
-                      <CardTitle className="text-primary text-xl">Анализ по предмету</CardTitle>
-                      <CardDescription className="text-muted-foreground">
+                      <CardTitle className="text-primary text-2xl mb-2">Анализ по предмету</CardTitle>
+                      <CardDescription className="text-muted-foreground text-base">
                         Рассчитайте средний балл и качество знаний для конкретного предмета
                       </CardDescription>
                     </div>
@@ -72,7 +67,7 @@ const Index = () => {
                 </CardHeader>
                 <CardContent>
                   <Button 
-                    className="w-full text-white font-medium rounded-xl h-12" 
+                    className="w-full text-white font-medium rounded-xl h-14 text-lg" 
                     style={{ 
                       background: 'var(--gradient-primary)',
                       border: 'none'
@@ -84,18 +79,18 @@ const Index = () => {
               </Card>
 
               <Card 
-                className="hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-secondary/20" 
+                className="hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-secondary/20 group" 
                 onClick={() => setActiveTab('class')}
                 style={{ boxShadow: 'var(--shadow-soft)' }}
               >
-                <CardHeader className="pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center">
-                      <Users className="w-6 h-6 text-secondary" />
+                <CardHeader className="pb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-secondary/10 rounded-2xl flex items-center justify-center group-hover:bg-secondary/20 transition-colors">
+                      <Users className="w-8 h-8 text-secondary" />
                     </div>
                     <div>
-                      <CardTitle className="text-primary text-xl">Анализ по классу</CardTitle>
-                      <CardDescription className="text-muted-foreground">
+                      <CardTitle className="text-primary text-2xl mb-2">Анализ по классу</CardTitle>
+                      <CardDescription className="text-muted-foreground text-base">
                         Комплексный анализ успеваемости по всем предметам в классе
                       </CardDescription>
                     </div>
@@ -103,7 +98,7 @@ const Index = () => {
                 </CardHeader>
                 <CardContent>
                   <Button 
-                    className="w-full text-white font-medium rounded-xl h-12" 
+                    className="w-full text-white font-medium rounded-xl h-14 text-lg" 
                     style={{ 
                       background: 'var(--gradient-secondary)',
                       border: 'none'
@@ -113,56 +108,49 @@ const Index = () => {
                   </Button>
                 </CardContent>
               </Card>
-
-              <Card 
-                className="border-2 border-primary/10"
-                style={{ boxShadow: 'var(--shadow-soft)' }}
-              >
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-primary text-xl">Преимущества EduMetrics</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid md:grid-cols-3 gap-6">
-                    <div className="text-center">
-                      <div className="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center mx-auto mb-3">
-                        <Calculator className="w-6 h-6 text-accent" />
-                      </div>
-                      <h3 className="font-semibold text-primary mb-2">Точные расчёты</h3>
-                      <p className="text-sm text-muted-foreground">Автоматический расчёт среднего балла и качества знаний</p>
-                    </div>
-                    <div className="text-center">
-                      <div className="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center mx-auto mb-3">
-                        <BarChart3 className="w-6 h-6 text-secondary" />
-                      </div>
-                      <h3 className="font-semibold text-primary mb-2">Визуализация</h3>
-                      <p className="text-sm text-muted-foreground">Наглядные диаграммы и графики результатов</p>
-                    </div>
-                    <div className="text-center">
-                      <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-3">
-                        <Users className="w-6 h-6 text-primary" />
-                      </div>
-                      <h3 className="font-semibold text-primary mb-2">Удобство</h3>
-                      <p className="text-sm text-muted-foreground">Простой и интуитивный интерфейс для учителей</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
+
+            <Card 
+              className="border-2 border-primary/10 max-w-4xl mx-auto"
+              style={{ boxShadow: 'var(--shadow-soft)' }}
+            >
+              <CardHeader className="pb-6">
+                <CardTitle className="text-primary text-2xl text-center">Преимущества EduMetrics</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-3 gap-8">
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <Calculator className="w-8 h-8 text-accent" />
+                    </div>
+                    <h3 className="font-semibold text-primary mb-3 text-lg">Точные расчёты</h3>
+                    <p className="text-muted-foreground">Автоматический расчёт среднего балла и качества знаний</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-secondary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <BarChart3 className="w-8 h-8 text-secondary" />
+                    </div>
+                    <h3 className="font-semibold text-primary mb-3 text-lg">Визуализация</h3>
+                    <p className="text-muted-foreground">Наглядные диаграммы и графики результатов</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <Users className="w-8 h-8 text-primary" />
+                    </div>
+                    <h3 className="font-semibold text-primary mb-3 text-lg">Удобство</h3>
+                    <p className="text-muted-foreground">Простой и интуитивный интерфейс для учителей</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="subject">
-            <div className="grid md:grid-cols-2 gap-6">
-              <Card style={{ boxShadow: 'var(--shadow-soft)' }}>
-                <CardContent className="p-6">
-                  <SubjectCalculator />
-                </CardContent>
-              </Card>
-              <Card style={{ boxShadow: 'var(--shadow-soft)' }}>
-                <CardContent className="p-6">
-                  <ClassCalculator />
-                </CardContent>
-              </Card>
-            </div>
+            <SubjectCalculator />
+          </TabsContent>
+
+          <TabsContent value="class">
+            <ClassCalculator />
           </TabsContent>
         </Tabs>
       </div>
