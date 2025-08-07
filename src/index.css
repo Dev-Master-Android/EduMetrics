@@ -173,18 +173,9 @@
     }
   }
 
-  /* Icon float animation */
+  /* Icon float animation - disabled */
   .icon-float {
-    animation: float 25s ease-in-out infinite;
-  }
-  
-  @keyframes float {
-    0%, 100% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-2px);
-    }
+    /* animation: none; */
   }
 
   /* Stagger animation for grid items */
